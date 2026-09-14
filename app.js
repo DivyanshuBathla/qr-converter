@@ -55,6 +55,7 @@
       t.panel.classList.toggle('is-active', on);
     });
     if (index !== 1) stopCamera();
+    if (index === 1) loadDecoder().catch(function () { /* reported when actually used */ });
   }
   tabs.forEach(function (t, i) {
     t.tab.addEventListener('click', function () { selectTab(i); });
@@ -90,11 +91,24 @@
     };
   }
 
+  /* The encoder defaults to Byte mode for everything, which wastes capacity:
+     digits pack 3 to ~10 bits in Numeric mode against 8 bits each in Byte
+     mode. Picking the tightest mode the payload allows yields a lower QR
+     version, so the modules are physically larger at the same print size and
+     scan more easily. The alphanumeric set is fixed by the QR spec. */
+  var ALPHANUMERIC = /^[0-9A-Z $%*+\-.\/:]+$/;
+
+  function bestMode(text) {
+    if (/^[0-9]+$/.test(text)) return 'Numeric';
+    if (ALPHANUMERIC.test(text)) return 'Alphanumeric';
+    return 'Byte';
+  }
+
   function buildQR(text, ecc) {
     // Byte-mode payloads are encoded as UTF-8 so non-ASCII links survive the round trip.
     qrcode.stringToBytes = qrcode.stringToBytesFuncs['UTF-8'];
     var qr = qrcode(0, ecc);      // type 0 = pick the smallest version that fits
-    qr.addData(text);
+    qr.addData(text, bestMode(text));
     qr.make();
     return qr;
   }
@@ -290,6 +304,29 @@
 
   var MAX_WORK = 1400;   // longest edge fed to the detector, in pixels
 
+  /* The decoder is 257 KB and most visitors only ever generate a code, so it
+     is fetched on demand rather than blocking first paint. Requested when the
+     decode tab opens, so it is usually in place before the user drops a file. */
+  var decoderPromise = null;
+  function loadDecoder() {
+    if (window.jsQR) return Promise.resolve(window.jsQR);
+    if (!decoderPromise) {
+      decoderPromise = new Promise(function (resolve, reject) {
+        var s = document.createElement('script');
+        s.src = 'vendor/jsQR.js';
+        s.onload = function () {
+          window.jsQR ? resolve(window.jsQR) : reject(new Error('decoder did not initialise'));
+        };
+        s.onerror = function () {
+          decoderPromise = null;      // let a later attempt retry
+          reject(new Error('could not load the decoder'));
+        };
+        document.head.appendChild(s);
+      });
+    }
+    return decoderPromise;
+  }
+
   function imageDataAt(img, scale) {
     var base = Math.min(MAX_WORK, Math.max(img.naturalWidth || img.width, img.naturalHeight || img.height));
     var srcW = img.naturalWidth || img.width, srcH = img.naturalHeight || img.height;
@@ -402,7 +439,7 @@
      then rescales, then an Otsu pass for the awkward photographs. */
   function decodeImage(img) {
     var scales = [1, 0.6, 1.5, 0.4];
-    var chain = Promise.resolve(null);
+    var chain = loadDecoder().then(function () { return null; });
     scales.forEach(function (s) {
       chain = chain.then(function (found) {
         if (found) return found;
@@ -519,6 +556,10 @@
           failed('No QR code found in that image. Try a sharper or more tightly cropped shot — ' +
                  'the whole code plus a little white border should be visible.');
         }
+        if (src.indexOf('blob:') === 0) URL.revokeObjectURL(src);
+      }).catch(function (err) {
+        decBusy.hidden = true;
+        failed('Could not load the decoder (' + err.message + '). Check your connection and try again.');
         if (src.indexOf('blob:') === 0) URL.revokeObjectURL(src);
       });
     };
@@ -649,9 +690,12 @@
     $('cam-start').hidden = true;
     camWrap.hidden = false;
     camStatus.textContent = 'Starting the camera…';
-    navigator.mediaDevices.getUserMedia({
-      video: { facingMode: { ideal: 'environment' }, width: { ideal: 1280 }, height: { ideal: 720 } },
-      audio: false
+    // scanFrame calls jsQR synchronously, so it must be loaded before the loop starts
+    loadDecoder().then(function () {
+      return navigator.mediaDevices.getUserMedia({
+        video: { facingMode: { ideal: 'environment' }, width: { ideal: 1280 }, height: { ideal: 720 } },
+        audio: false
+      });
     }).then(function (stream) {
       camStream = stream;
       camVideo.srcObject = stream;

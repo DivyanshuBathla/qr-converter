@@ -53,6 +53,95 @@
   "license": "https://github.com/DivyanshuBathla/qr-converter"
 }
 </script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "Is my data uploaded anywhere?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "No. Both the encoder and decoder run as JavaScript inside your own browser. Links you type, images you drop and camera frames are never transmitted, and there is no server to receive them."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Does it work offline?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes, once the page has loaded. Both libraries are bundled with the page rather than fetched from a content delivery network, so nothing external is needed at runtime."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Can I read a QR code from a screenshot?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes. Take the screenshot, then press Ctrl+V on the QR to Link tab. There is no need to save a file first."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Can it read a blurry or badly lit photo?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Often. The decoder makes several attempts at different scales, and if those fail it estimates the lighting across the image and divides it out before trying again, which recovers faded print and photographs taken under uneven light. A code that is out of focus beyond recognition, or cropped so the corner squares are missing, cannot be recovered."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Do these QR codes expire, and are scans tracked?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "They never expire and there is no scan tracking. The code contains your link directly, so it works forever and depends on nothing here. This is the opposite of a dynamic QR code, which encodes a redirect through a third party's server."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Is it free, and is there a limit?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Free, with no account, no watermark, no daily limit and no restriction on commercial use."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What can I put in a QR code besides a link?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Any text. Common conventions phones recognise include mailto:you@example.com for an email, tel:+919876543210 to dial a number, and WIFI:T:WPA;S:NetworkName;P:password;; to join a wireless network."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Should I trust a QR code I find in public?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Treat it like a shortened link from a stranger: the destination is hidden until decoded, which is what makes stickers placed over legitimate codes effective. Decoding here shows the host name before you visit it, and flags plain http, addresses using non-ASCII characters that can imitate a familiar domain, and unusually long links."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Which error correction level should I choose?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "M is the sensible default. Use Q or H for printed material that will be handled or partly covered by a logo. Higher levels pack more modules into the same square, making each module physically smaller, so higher is not automatically better."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How much data fits in a QR code?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "At most 7089 digits, 4296 uppercase alphanumeric characters, or 2953 bytes of arbitrary text, using the largest version at the lowest error correction level. Higher error correction reduces these limits."
+      }
+    }
+  ]
+}
+</script>
 </head>
 <body>
 
@@ -209,6 +298,96 @@
 
 </main>
 
+<section class="content">
+
+  <h2 id="how-to-generate">How to turn a link into a QR code</h2>
+  <ol>
+    <li>Paste your link into the <strong>Link&nbsp;→&nbsp;QR</strong> box above. The code is drawn as you type — there is no generate button.</li>
+    <li>Adjust error correction, size, quiet zone or colours if you need to. The page warns you if a choice would stop scanners reading the result.</li>
+    <li>Choose <strong>Download PNG</strong> for screens and slides, or <strong>Download SVG</strong> for anything going to print.</li>
+  </ol>
+
+  <h2 id="how-to-read">How to read a QR code from an image</h2>
+  <ol>
+    <li>Open the <strong>QR&nbsp;→&nbsp;Link</strong> tab.</li>
+    <li>Drop an image file onto the box, click it to browse, or press <kbd>Ctrl</kbd>&nbsp;+&nbsp;<kbd>V</kbd> to paste a screenshot straight from your clipboard.</li>
+    <li>The decoded text appears along with its host name. <strong>Open link</strong> follows it; <strong>Copy</strong> takes the text.</li>
+  </ol>
+  <p>For a code printed on paper or shown on another screen, <strong>Scan with camera</strong> is quicker than photographing it first. Camera access requires the site to be served over https, which it is here.</p>
+
+  <h2 id="png-or-svg">Should you download PNG or SVG?</h2>
+  <p><strong>PNG</strong> is a grid of pixels. It is the right choice for slides, web pages, emails and anywhere the code appears at roughly the size you exported it. Enlarge it well beyond that and the edges soften.</p>
+  <p><strong>SVG</strong> stores the code as shapes rather than pixels, so it stays perfectly sharp at any size. Use it for posters, banners, business cards, book covers — anything going to a printer. If a designer or print shop asks for "vector", SVG is what they mean.</p>
+
+  <h2 id="error-correction">Which error correction level should you choose?</h2>
+  <p>QR codes carry redundant data so they still read when partly damaged or obscured. More redundancy means a denser code for the same content.</p>
+  <table>
+    <thead>
+      <tr><th>Level</th><th>Recoverable</th><th>Use it for</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><strong>L</strong></td><td>about 7%</td><td>Clean digital use only — a slide or web page where nothing can damage the code.</td></tr>
+      <tr><td><strong>M</strong></td><td>about 15%</td><td>The sensible default, and what this page starts on.</td></tr>
+      <tr><td><strong>Q</strong></td><td>about 25%</td><td>Printed material that will be handled — flyers, labels, tickets.</td></tr>
+      <tr><td><strong>H</strong></td><td>about 30%</td><td>Harsh conditions, curved surfaces, or when placing a logo over the centre of the code.</td></tr>
+    </tbody>
+  </table>
+  <p>Higher is not automatically better. A higher level packs more modules into the same square, so each module is physically smaller and a low-resolution scanner may struggle. If your code is going somewhere safe, M is usually the better trade.</p>
+
+  <h2 id="capacity">How much data fits in a QR code?</h2>
+  <p>The limits below are the maximum for a version 40 code, the largest in the specification. They were computed with the same encoder this page uses, not quoted from a table.</p>
+  <table>
+    <thead>
+      <tr><th>Content</th><th>ECC&nbsp;L</th><th>ECC&nbsp;M</th><th>ECC&nbsp;Q</th><th>ECC&nbsp;H</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Digits only</td><td>7089</td><td>5596</td><td>3993</td><td>3057</td></tr>
+      <tr><td>Uppercase letters and digits</td><td>4296</td><td>3391</td><td>2420</td><td>1852</td></tr>
+      <tr><td>Any text, counted in UTF&#8209;8 bytes</td><td>2953</td><td>2331</td><td>1663</td><td>1273</td></tr>
+    </tbody>
+  </table>
+  <p>Digits pack far tighter than arbitrary text because the format encodes them three at a time. This page picks the tightest encoding your content allows automatically. Note that accented letters, Devanagari and emoji cost several bytes each, not one.</p>
+  <p>In practice you will rarely approach these limits. A typical web link of 40 to 60 characters produces a small version 3 or 4 code. Very long links produce dense codes that need to be printed larger to stay scannable — if you are encoding a long URL, a shortened one will scan far more reliably.</p>
+
+  <h2 id="wont-scan">Why a QR code won't scan</h2>
+  <p>In rough order of how often each is the culprit:</p>
+  <ul>
+    <li><strong>Too little contrast.</strong> Scanners read light against dark. A tinted code on a coloured background can look fine to you and be invisible to a phone. This page warns you when the contrast drops too low.</li>
+    <li><strong>No quiet zone.</strong> The blank margin around a code is part of the format, not decoration. Cropping it away, or placing the code tight against other artwork, breaks detection. Keep at least four modules clear.</li>
+    <li><strong>Printed too small.</strong> A dense code needs physical size. As a rough rule, a code should be at least a tenth as wide as the distance it will be scanned from.</li>
+    <li><strong>Inverted colours.</strong> Light-on-dark codes do not work in every scanner, even though the format allows it. Dark modules on a light background is the safe choice.</li>
+    <li><strong>A logo covering too much.</strong> If you overlay artwork, raise error correction to H and keep the covered area small. Never cover the three large corner squares — those are how a scanner finds the code at all.</li>
+  </ul>
+
+  <h2 id="faq">Frequently asked questions</h2>
+
+  <h3>Is my data uploaded anywhere?</h3>
+  <p>No. Both the encoder and decoder run as JavaScript inside your own browser. Links you type, images you drop and camera frames are never transmitted, and there is no server to receive them. You can confirm this by opening your browser's network tab, or by disconnecting from the internet and reloading — the page keeps working.</p>
+
+  <h3>Does it work offline?</h3>
+  <p>Yes, once the page has loaded. Both libraries are bundled with the page rather than fetched from a content delivery network, so nothing external is needed at runtime.</p>
+
+  <h3>Can I read a QR code from a screenshot?</h3>
+  <p>Yes, and it is the fastest route for a code you have found on a web page or inside a PDF. Take the screenshot, then press <kbd>Ctrl</kbd>&nbsp;+&nbsp;<kbd>V</kbd> on the <strong>QR&nbsp;→&nbsp;Link</strong> tab. No need to save a file first.</p>
+
+  <h3>Can it read a blurry or badly lit photo?</h3>
+  <p>Often, yes. The decoder makes several attempts at different scales, and if those fail it estimates the lighting across the image and divides it out before trying again, which recovers faded print and photographs taken under uneven light. It is not magic — a code that is out of focus beyond recognition, or cropped so the corner squares are missing, cannot be recovered.</p>
+
+  <h3>Do these QR codes expire, and do you track scans?</h3>
+  <p>They never expire, and there is no scan tracking. The code contains your link directly, so it works forever and depends on nothing here. This is the opposite of a "dynamic" QR code, which encodes a redirect through a third party's server — those can be edited after printing and can count scans, but they stop working entirely if that company shuts the service down or starts charging.</p>
+
+  <h3>Is it free, and is there a limit?</h3>
+  <p>Free, with no account, no watermark, no daily limit and no restriction on commercial use. The codes are yours.</p>
+
+  <h3>What can I put in a QR code besides a link?</h3>
+  <p>Any text at all. Common conventions that phones recognise include <code>mailto:you@example.com</code> for an email, <code>tel:+919876543210</code> to dial a number, and <code>WIFI:T:WPA;S:NetworkName;P:password;;</code> to join a wireless network. Plain text with no prefix simply displays on the scanning phone.</p>
+
+  <h3>Should I trust a QR code I find in public?</h3>
+  <p>Treat one like a shortened link from a stranger: the destination is hidden until you decode it, which is precisely what makes stickers placed over legitimate codes effective. Decoding here shows you the host name before you visit it, and flags plain <code>http</code>, addresses using non-ASCII characters that can imitate a familiar domain, and unusually long links.</p>
+
+</section>
+
+
 <footer>
   <p>Everything runs in your browser. No image, link or camera frame is uploaded anywhere.</p>
 </footer>
@@ -216,7 +395,6 @@
 <div class="toast" id="toast" hidden></div>
 
 <script src="vendor/qrcode-generator.js"></script>
-<script src="vendor/jsQR.js"></script>
 <script src="app.js"></script>
 </body>
 </html>
