@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>QR Converter</title>
+<meta name="description" content="Convert a link to a QR code, and read a link back out of a QR code image.">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<header class="topbar">
+  <div class="brand">
+    <svg class="logo" viewBox="0 0 24 24" aria-hidden="true">
+      <rect x="2" y="2" width="8" height="8" rx="1.5"></rect>
+      <rect x="14" y="2" width="8" height="8" rx="1.5"></rect>
+      <rect x="2" y="14" width="8" height="8" rx="1.5"></rect>
+      <rect x="14.5" y="14.5" width="3" height="3"></rect>
+      <rect x="19" y="19" width="3" height="3"></rect>
+      <rect x="14.5" y="19" width="3" height="3" opacity=".45"></rect>
+      <rect x="19" y="14.5" width="3" height="3" opacity=".45"></rect>
+    </svg>
+    <h1>QR Converter</h1>
+  </div>
+  <button id="theme-toggle" class="ghost-btn" type="button" title="Switch light / dark">
+    <span id="theme-icon">◐</span><span class="btn-label">Theme</span>
+  </button>
+</header>
+
+<nav class="tabs" role="tablist">
+  <button class="tab is-active" role="tab" aria-selected="true" aria-controls="panel-encode" id="tab-encode">
+    Link → QR
+  </button>
+  <button class="tab" role="tab" aria-selected="false" aria-controls="panel-decode" id="tab-decode">
+    QR → Link
+  </button>
+</nav>
+
+<main>
+
+  <!-- ================= ENCODE ================= -->
+  <section class="panel is-active" id="panel-encode" role="tabpanel" aria-labelledby="tab-encode">
+    <div class="grid">
+
+      <div class="card">
+        <label class="field-label" for="enc-input">Link or text</label>
+        <textarea id="enc-input" rows="3" spellcheck="false"
+                  placeholder="https://example.com"></textarea>
+        <p class="hint" id="enc-hint">Anything works — a URL, plain text, an email address, Wi-Fi credentials.</p>
+
+        <div class="controls">
+          <div class="control">
+            <label for="enc-ecc">Error correction</label>
+            <select id="enc-ecc">
+              <option value="L">L — 7% recoverable</option>
+              <option value="M" selected>M — 15% recoverable</option>
+              <option value="Q">Q — 25% recoverable</option>
+              <option value="H">H — 30% recoverable</option>
+            </select>
+          </div>
+
+          <div class="control">
+            <label for="enc-size">Size <span class="val" id="enc-size-val">512 px</span></label>
+            <input type="range" id="enc-size" min="128" max="2048" step="32" value="512">
+          </div>
+
+          <div class="control">
+            <label for="enc-margin">Quiet zone <span class="val" id="enc-margin-val">4 modules</span></label>
+            <input type="range" id="enc-margin" min="0" max="10" step="1" value="4">
+          </div>
+
+          <div class="control colors">
+            <div>
+              <label for="enc-fg">Dark</label>
+              <input type="color" id="enc-fg" value="#111318">
+            </div>
+            <div>
+              <label for="enc-bg">Light</label>
+              <input type="color" id="enc-bg" value="#ffffff">
+            </div>
+            <button type="button" class="ghost-btn small" id="enc-reset">Reset</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="card preview-card">
+        <div class="preview-wrap" id="enc-preview-wrap">
+          <canvas id="enc-canvas" aria-label="Generated QR code"></canvas>
+          <p class="placeholder" id="enc-placeholder">Your QR code appears here</p>
+        </div>
+
+        <p class="meta" id="enc-meta"></p>
+        <p class="error" id="enc-error" hidden></p>
+
+        <div class="actions">
+          <button type="button" class="btn" id="enc-png" disabled>Download PNG</button>
+          <button type="button" class="btn" id="enc-svg" disabled>Download SVG</button>
+          <button type="button" class="btn subtle" id="enc-copy" disabled>Copy image</button>
+        </div>
+        <p class="hint center" id="enc-savehint" hidden>
+          If the download is blocked, long-press or right-click the code above and save it.
+        </p>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ================= DECODE ================= -->
+  <section class="panel" id="panel-decode" role="tabpanel" aria-labelledby="tab-decode">
+    <div class="grid">
+
+      <div class="card">
+        <div class="dropzone" id="dropzone" tabindex="0" role="button"
+             aria-label="Choose a QR code image, or drop one here">
+          <svg class="drop-icon" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M12 16V4m0 0L8 8m4-4 4 4" fill="none" stroke-width="1.8"
+                  stroke-linecap="round" stroke-linejoin="round"></path>
+            <path d="M4 15v3a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-3" fill="none" stroke-width="1.8"
+                  stroke-linecap="round"></path>
+          </svg>
+          <p class="drop-title">Drop a QR image, or click to choose</p>
+          <p class="hint">You can also paste one with Ctrl&nbsp;+&nbsp;V · PNG, JPG, WebP, GIF, SVG</p>
+          <input type="file" id="file-input" accept="image/*" hidden>
+        </div>
+
+        <div class="or"><span>or</span></div>
+
+        <button type="button" class="btn wide" id="cam-start">Scan with camera</button>
+        <div class="cam-wrap" id="cam-wrap" hidden>
+          <video id="cam-video" playsinline muted></video>
+          <div class="cam-bar">
+            <span class="cam-status" id="cam-status">Point the camera at a QR code…</span>
+            <button type="button" class="ghost-btn small" id="cam-stop">Stop</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="preview-wrap small" id="dec-preview-wrap">
+          <canvas id="dec-canvas" aria-label="Scanned image"></canvas>
+          <p class="placeholder" id="dec-placeholder">The scanned image appears here</p>
+        </div>
+
+        <div id="dec-result" hidden>
+          <p class="field-label">Decoded content</p>
+          <pre class="result-text" id="dec-text"></pre>
+          <p class="meta" id="dec-meta"></p>
+          <div class="actions">
+            <a class="btn" id="dec-open" href="#" target="_blank" rel="noopener noreferrer" hidden>Open link</a>
+            <button type="button" class="btn subtle" id="dec-copy">Copy</button>
+            <button type="button" class="btn subtle" id="dec-toencode">Make a QR from this</button>
+          </div>
+          <p class="warn" id="dec-warn" hidden></p>
+        </div>
+
+        <p class="error" id="dec-error" hidden></p>
+        <p class="busy" id="dec-busy" hidden>Reading…</p>
+      </div>
+
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <p>Everything runs in your browser. No image, link or camera frame is uploaded anywhere.</p>
+</footer>
+
+<div class="toast" id="toast" hidden></div>
+
+<script src="vendor/qrcode-generator.js"></script>
+<script src="vendor/jsQR.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

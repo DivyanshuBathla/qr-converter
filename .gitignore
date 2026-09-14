@@ -1,0 +1,13 @@
+# OS / editor cruft
+.DS_Store
+Thumbs.db
+*~
+*.swp
+.vscode/
+.idea/
+
+# scratch files from local testing
+__smoke*.html
+__shot*.html
+__state*.html
+__svg*.html
