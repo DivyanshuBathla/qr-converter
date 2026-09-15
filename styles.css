@@ -471,7 +471,51 @@ footer p { margin: 0; }
 .content td + td, .content th + th { font-variant-numeric: tabular-nums; }
 .content tbody tr:last-child td { border-bottom: 0; }
 
+/* On a phone a table either scrolls sideways or gets cut off, and both read as
+   broken. Below 620px each row becomes its own card instead, with the column
+   heading carried down as a label on each cell. */
 @media (max-width: 620px) {
-  .content table { display: block; overflow-x: auto; white-space: nowrap; }
-  .content table td:first-child, .content table th:first-child { white-space: normal; min-width: 9em; }
+  .content table,
+  .content table tbody,
+  .content table tr,
+  .content table td { display: block; width: 100%; }
+  .content table thead { display: none; }
+
+  .content table tr {
+    border: 1px solid var(--border);
+    border-radius: 11px;
+    padding: 13px 15px;
+    margin-bottom: 10px;
+    background: var(--surface);
+  }
+  .content table td { border: 0; padding: 0; }
+
+  /* stacked: label above value, for rows carrying prose */
+  .content .table-stack td + td { margin-top: 10px; }
+  .content .table-stack td::before {
+    content: attr(data-label);
+    display: block;
+    font-size: 11px;
+    font-weight: 640;
+    text-transform: uppercase;
+    letter-spacing: .05em;
+    color: var(--muted);
+    margin-bottom: 2px;
+  }
+
+  /* compact: title, then the four figures inline */
+  .content .table-compact td { display: inline-flex; align-items: baseline; gap: 6px; width: auto; margin-right: 16px; }
+  .content .table-compact td:first-child {
+    display: block;
+    width: 100%;
+    font-weight: 620;
+    margin: 0 0 9px;
+  }
+  .content .table-compact td:not(:first-child)::before {
+    content: attr(data-label);
+    font-size: 11px;
+    font-weight: 640;
+    letter-spacing: .05em;
+    color: var(--muted);
+  }
 }

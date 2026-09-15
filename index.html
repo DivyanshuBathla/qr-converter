@@ -321,29 +321,29 @@
 
   <h2 id="error-correction">Which error correction level should you choose?</h2>
   <p>QR codes carry redundant data so they still read when partly damaged or obscured. More redundancy means a denser code for the same content.</p>
-  <table>
+  <table class="table-stack">
     <thead>
       <tr><th>Level</th><th>Recoverable</th><th>Use it for</th></tr>
     </thead>
     <tbody>
-      <tr><td><strong>L</strong></td><td>about 7%</td><td>Clean digital use only — a slide or web page where nothing can damage the code.</td></tr>
-      <tr><td><strong>M</strong></td><td>about 15%</td><td>The sensible default, and what this page starts on.</td></tr>
-      <tr><td><strong>Q</strong></td><td>about 25%</td><td>Printed material that will be handled — flyers, labels, tickets.</td></tr>
-      <tr><td><strong>H</strong></td><td>about 30%</td><td>Harsh conditions, curved surfaces, or when placing a logo over the centre of the code.</td></tr>
+      <tr><td data-label="Level"><strong>L</strong></td><td data-label="Recoverable">about 7%</td><td data-label="Use it for">Clean digital use only — a slide or web page where nothing can damage the code.</td></tr>
+      <tr><td data-label="Level"><strong>M</strong></td><td data-label="Recoverable">about 15%</td><td data-label="Use it for">The sensible default, and what this page starts on.</td></tr>
+      <tr><td data-label="Level"><strong>Q</strong></td><td data-label="Recoverable">about 25%</td><td data-label="Use it for">Printed material that will be handled — flyers, labels, tickets.</td></tr>
+      <tr><td data-label="Level"><strong>H</strong></td><td data-label="Recoverable">about 30%</td><td data-label="Use it for">Harsh conditions, curved surfaces, or when placing a logo over the centre of the code.</td></tr>
     </tbody>
   </table>
   <p>Higher is not automatically better. A higher level packs more modules into the same square, so each module is physically smaller and a low-resolution scanner may struggle. If your code is going somewhere safe, M is usually the better trade.</p>
 
   <h2 id="capacity">How much data fits in a QR code?</h2>
   <p>The limits below are the maximum for a version 40 code, the largest in the specification. They were computed with the same encoder this page uses, not quoted from a table.</p>
-  <table>
+  <table class="table-compact">
     <thead>
       <tr><th>Content</th><th>ECC&nbsp;L</th><th>ECC&nbsp;M</th><th>ECC&nbsp;Q</th><th>ECC&nbsp;H</th></tr>
     </thead>
     <tbody>
-      <tr><td>Digits only</td><td>7089</td><td>5596</td><td>3993</td><td>3057</td></tr>
-      <tr><td>Uppercase letters and digits</td><td>4296</td><td>3391</td><td>2420</td><td>1852</td></tr>
-      <tr><td>Any text, counted in UTF&#8209;8 bytes</td><td>2953</td><td>2331</td><td>1663</td><td>1273</td></tr>
+      <tr><td>Digits only</td><td data-label="L">7089</td><td data-label="M">5596</td><td data-label="Q">3993</td><td data-label="H">3057</td></tr>
+      <tr><td>Uppercase letters and digits</td><td data-label="L">4296</td><td data-label="M">3391</td><td data-label="Q">2420</td><td data-label="H">1852</td></tr>
+      <tr><td>Any text, counted in UTF&#8209;8 bytes</td><td data-label="L">2953</td><td data-label="M">2331</td><td data-label="Q">1663</td><td data-label="H">1273</td></tr>
     </tbody>
   </table>
   <p>Digits pack far tighter than arbitrary text because the format encodes them three at a time. This page picks the tightest encoding your content allows automatically. Note that accented letters, Devanagari and emoji cost several bytes each, not one.</p>
